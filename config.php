@@ -22,19 +22,25 @@ if (file_exists($envFile)) {
     }
 }
 
+
+
 $host     = getenv('DB_HOST');
 $dbname   = getenv('DB_NAME');
 $username = getenv('DB_USER');
 $password = getenv('DB_PASSWORD');
 
 try {
-    $pdo = new PDO(
-        "mysql:host=$host;dbname=$dbname;charset=utf8",
-        $username,
-        $password
-    );
+    $options = [
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+    ];
 
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $dsn = "mysql:host=$host;dbname=$dbname;charset=utf8";
+
+    $pdo = new PDO($dsn, $username, $password, $options);
+
+    // Enable TLS for TiDB Cloud
+    $pdo->exec("SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED");
 
 } catch (PDOException $e) {
     die(json_encode([
