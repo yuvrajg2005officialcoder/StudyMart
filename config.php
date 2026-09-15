@@ -28,14 +28,17 @@ $host     = getenv('DB_HOST');
 $dbname   = getenv('DB_NAME');
 $username = getenv('DB_USER');
 $password = getenv('DB_PASSWORD');
+$port     = getenv('DB_PORT') ?: '4000';
 
 try {
     $options = [
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+        PDO::MYSQL_ATTR_SSL_CA => '/etc/ssl/certs/ca-certificates.crt',
+        PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => false,
     ];
 
-    $dsn = "mysql:host=$host;dbname=$dbname;charset=utf8";
+    $dsn = "mysql:host=$host;port=$port;dbname=$dbname;charset=utf8";
 
     $pdo = new PDO($dsn, $username, $password, $options);
 
